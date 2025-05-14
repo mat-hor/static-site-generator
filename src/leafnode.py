@@ -6,18 +6,9 @@ class LeafNode(HTMLNode):
 
     def to_html(self):
         if self.value is None:
-            raise ValueError
+            raise ValueError("value is none")
         if self.tag is None:
             return self.value
         if self.props is None:
             return f"<{self.tag}>{self.value}</{self.tag}>"
         return f"<{self.tag}{self.props_to_html()}>{self.value}</{self.tag}>"
-
-
-x = LeafNode("a", "Click me!", {"href": "https://www.google.com"}).to_html()
-
-print(x)
-
-x = LeafNode("a", "Click me!").to_html()
-
-print(x)
