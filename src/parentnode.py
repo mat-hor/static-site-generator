@@ -19,16 +19,3 @@ class ParentNode(HTMLNode):
             return ""
         return children[0].to_html() + self.__get_children_html(children[1:])
         
-        
-
-node = ParentNode(
-    "p",
-    [
-        LeafNode("b", "Bold text"),
-        LeafNode(None, "Normal text"),
-        LeafNode("i", "italic text"),
-        LeafNode(None, "Normal text"),
-    ],
-)
-        
-print(node.to_html())
