@@ -19,24 +19,27 @@ def text_node_to_html_node(text_node):
             raise Exception("Undefinde text type")
 
 def split_nodes_delimiter(old_nodes, delimiter, text_type):
+
         new_nodes = []
+        delimiter_found = False
         for old_node in old_nodes:
             if old_node.text_type != TextType.TEXT:
                 new_nodes.append(TextNode(old_node.text, old_node.text_type))
-                break
+                continue
             start_position = old_node.text.find(delimiter)
-            print("LLLL", start_position)
             if start_position == -1:
-                raise Exception("Invalid markdown syntax, opening delimiter not found")
+                new_nodes.append(TextNode(old_node.text, old_node.text_type))
+                continue
             end_position = old_node.text[start_position+1:].find(delimiter)
             if end_position == -1:
-                raise Exception("Invalid markdown syntax, closing delimiter not found")
+                continue
+            delimiter_found = True
             end_position += start_position
-            inline_bloc_text = old_node.text[start_position+1:end_position+1]
-            
+            inline_bloc_text = old_node.text[start_position+len(delimiter):end_position+1]
             splited_node_text = old_node.text.split(delimiter)
             
             for split_text in splited_node_text:
+                
                 if inline_bloc_text in split_text:
             
                     text_node = TextNode(split_text, text_type)
@@ -45,4 +48,6 @@ def split_nodes_delimiter(old_nodes, delimiter, text_type):
                     text_node = TextNode(split_text, old_node.text_type)
                     new_nodes.append(text_node)
 
+        if not delimiter_found:
+            raise Exception("Delimiter not found")
         return new_nodes
