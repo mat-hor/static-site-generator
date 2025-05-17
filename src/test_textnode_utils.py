@@ -1,8 +1,8 @@
 import unittest
-from main import text_node_to_html_node
+from textnode_utils import text_node_to_html_node, split_nodes_delimiter
 from textnode import TextNode, TextType
 
-class TestMain(unittest.TestCase):
+class TestTextNodeUtils(unittest.TestCase):
     
     def test_text(self):
         node = TextNode("This is a text node", TextType.TEXT)
