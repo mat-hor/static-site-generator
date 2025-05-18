@@ -16,7 +16,7 @@ def text_node_to_html_node(text_node):
         case TextType.IMAGE:
             return LeafNode(tag = "img", value="", props={"src":text_node.url, "alt":text_node.text})
         case _:
-            raise Exception("Undefinde text type")
+            raise Exception("Undefined text type")
 
 def split_nodes_delimiter(old_nodes, delimiter, text_type):
 
