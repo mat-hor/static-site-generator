@@ -1,5 +1,6 @@
 from textnode import TextNode, TextType
 from leafnode import LeafNode
+from markdown_utils import extract_markdown_images, extract_markdown_links
 
 def text_node_to_html_node(text_node):
     match text_node.text_type:
@@ -51,3 +52,37 @@ def split_nodes_delimiter(old_nodes, delimiter, text_type):
         if not delimiter_found:
             raise Exception("Delimiter not found")
         return new_nodes
+
+def split_nodes_image(old_nodes):
+    new_nodes = []
+    for old_node in old_nodes:
+        links = extract_markdown_images(old_node.text)
+        text = old_node.text
+        for link in links:
+            delimiter = f"![{link[0]}]({link[1]})"
+            splited_text = text.split(delimiter, 1)
+            new_nodes.append(TextNode(splited_text[0], TextType.TEXT))
+            new_nodes.append(TextNode(link[0], TextType.IMAGE, link[1]))
+            text = text.replace(splited_text[0], "")
+            text = text.replace(delimiter, "")
+  
+    return new_nodes
+
+def split_nodes_link(old_nodes):
+    new_nodes = []
+    for old_node in old_nodes:
+        links = extract_markdown_links(old_node.text)
+        text = old_node.text
+        for link in links:
+            delimiter = f"[{link[0]}]({link[1]})"
+            splited_text = text.split(delimiter, 1)
+            new_nodes.append(TextNode(splited_text[0], TextType.TEXT))
+            new_nodes.append(TextNode(link[0], TextType.LINK, link[1]))
+            text = text.replace(splited_text[0], "")
+            text = text.replace(delimiter, "")
+  
+    return new_nodes
+    
+
+
+
