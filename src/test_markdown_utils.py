@@ -1,5 +1,5 @@
 import unittest
-from markdown_utils import extract_markdown_images, extract_markdown_links
+from markdown_utils import extract_markdown_images, extract_markdown_links, markdown_to_blocks
 
 class TestMarkdownUtils(unittest.TestCase):
     def test_extract_markdown_images(self):
@@ -13,5 +13,26 @@ class TestMarkdownUtils(unittest.TestCase):
         "This is text with a link [to boot dev](https://www.boot.dev) and [to youtube](https://www.youtube.com/@bootdotdev)"
         )
         self.assertListEqual([('to boot dev', 'https://www.boot.dev'), ('to youtube', 'https://www.youtube.com/@bootdotdev')], matches)
+
+
+    def test_markdown_to_blocks(self):
+        md = """
+This is **bolded** paragraph
+
+This is another paragraph with _italic_ text and `code` here
+This is the same paragraph on a new line
+
+- This is a list
+- with items
+"""
+        blocks = markdown_to_blocks(md)
+        self.assertEqual(
+            blocks,
+            [
+                "This is **bolded** paragraph",
+                "This is another paragraph with _italic_ text and `code` here\nThis is the same paragraph on a new line",
+                "- This is a list\n- with items",
+            ],
+        )
 
         
