@@ -22,19 +22,18 @@ def text_node_to_html_node(text_node):
 def split_nodes_delimiter(old_nodes, delimiter, text_type):
 
         new_nodes = []
-        delimiter_found = False
         for old_node in old_nodes:
             if old_node.text_type != TextType.TEXT:
                 new_nodes.append(TextNode(old_node.text, old_node.text_type))
                 continue
             start_position = old_node.text.find(delimiter)
+
             if start_position == -1:
                 new_nodes.append(TextNode(old_node.text, old_node.text_type))
                 continue
             end_position = old_node.text[start_position+1:].find(delimiter)
             if end_position == -1:
-                continue
-            delimiter_found = True
+                raise Exception("Closing delimiter not found")
             end_position += start_position
             inline_bloc_text = old_node.text[start_position+len(delimiter):end_position+1]
             splited_node_text = old_node.text.split(delimiter)
@@ -48,9 +47,7 @@ def split_nodes_delimiter(old_nodes, delimiter, text_type):
                 else:
                     text_node = TextNode(split_text, old_node.text_type)
                     new_nodes.append(text_node)
-
-        if not delimiter_found:
-            raise Exception("Delimiter not found")
+            
         return new_nodes
 
 def split_nodes_image(old_nodes):
@@ -92,9 +89,12 @@ def split_nodes_link(old_nodes):
             new_nodes.append(TextNode(text, TextType.TEXT))
   
     return new_nodes
-    
 
+def clean_text(text):
+    return " ".join(list(map(lambda x: x.strip(), text.split("\n"))))
+    
 def text_to_textnodes(text):
+    text = clean_text(text)
     node = TextNode(text, TextType.TEXT)
     new_node = split_nodes_delimiter([node], "**", TextType.BOLD)
     new_node = split_nodes_delimiter(new_node, "_", TextType.ITALIC)

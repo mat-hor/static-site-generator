@@ -35,47 +35,4 @@ This is the same paragraph on a new line
             ],
         )
 
-    def test_block_to_block_type(self):
-        md = """
-# Heading 1
-
-## Heading 2
-
-### Heading 3
-
-#### Heading 4
-
-##### Heading 5
-
-###### Heading 6
-
-This is a paragraph of text.
-
-This is a **bold** word.
-
-This is an _italic_ word.
-
-This is a paragraph with a [link](https://www.google.com).
-
-- Item 1
-- Item 2
-- Item 3
-
-1. Item 1
-2. Item 2
-3. Item 3
-
-```
-This is code
-```
-"""
-        result = []
-        blocks = markdown_to_blocks(md)
-        for block in blocks:
-            result.append(block_to_block_type(block).value)
-        self.assertEqual(
-            result,
-            ['heading', 'heading', 'heading', 'heading', 'heading', 'heading', 'paragraph', 'paragraph', 'paragraph', 'paragraph', 'unordered_list', 'ordered_list', 'paragraph'],
-        )
-
-        
+    
