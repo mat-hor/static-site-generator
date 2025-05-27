@@ -34,16 +34,6 @@ the **same** even with inline stuff
         html,
         "<div><pre><code>This is text that _should_ remain\nthe **same** even with inline stuff\n</code></pre></div>",
     )
-        
-    # def test_quoteblock(self):
-    #     md = "<blockquote>This is a quote.</blockquote>"
-
-    #     node = markdown_to_html_node(md)
-    #     html = node.to_html()
-    #     self.assertEqual(
-    #     html,
-    #     "<div><pre><code>This is text that _should_ remain\nthe **same** even with inline stuff\n</code></pre></div>",
-    # )
 
 
 if __name__ == "__main__":
