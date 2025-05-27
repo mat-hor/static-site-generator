@@ -1,6 +1,7 @@
 import markdown_utils, textnode_utils
 import parentnode
 from textnode import TextNode
+import re
 
 
 def text_to_leafnode(text, delimeter, text_type):
@@ -10,7 +11,7 @@ def text_to_leafnode(text, delimeter, text_type):
 
 def text_to_children(text):
     text_nodes = textnode_utils.text_to_textnodes(text)
-    print(text_nodes)
+
     return list(map(lambda x: textnode_utils.text_node_to_html_node(x) ,text_nodes))
     
 def markdown_to_html_node(markdown):
@@ -20,7 +21,7 @@ def markdown_to_html_node(markdown):
     elements = []
     for text_block in text_blocks:
         block_type = markdown_utils.block_to_block_type(text_block)
-        print("BLOCK TYPE:", block_type)
+
         match block_type:
             case markdown_utils.BlockType.CODE:    
                 code_node = TextNode(text=text_block.replace("```", "").lstrip(), text_type=textnode_utils.TextType.CODE)
@@ -56,8 +57,12 @@ def markdown_to_html_node(markdown):
                 block_parent = parentnode.ParentNode("ol",unordered_list_children)
 
             case markdown_utils.BlockType.HEADING:
-                child = text_to_leafnode(text_block, "#", textnode_utils.TextType.TEXT)
-                child.tag = "h1"
+                hash_char = "#"
+                for num in range(0, 6):
+                    if re.findall(r"^" + hash_char + " ", text_block):
+                        child = text_to_leafnode(text_block, f"{hash_char}", textnode_utils.TextType.TEXT)
+                        child.tag = f"h{num + 1}"
+                    hash_char += "#"
                 block_parent = child
                 
         
