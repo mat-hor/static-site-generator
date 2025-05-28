@@ -2,6 +2,8 @@ import markdown_utils, textnode_utils
 import parentnode
 from textnode import TextNode
 import re
+from os import listdir, path, mkdir
+from shutil import rmtree, copy
 
 
 def text_to_leafnode(text, delimeter, text_type):
@@ -72,8 +74,24 @@ def markdown_to_html_node(markdown):
 
     return html_parent
 
+def create_file_folder_structure(src, dst):
+    if path.exists(dst):
+        rmtree(dst)
+    mkdir(dst)
+    copy_files(src,dst)
+    
+def copy_files(src, dest):
+    elements = listdir(src)
+    for element in elements:
+        file_src = path.join(src, element)
+        file_dest = path.join(dest, element)
+        if path.isfile(file_src):
+            copy(file_src, file_dest)
+        else:
+            mkdir(file_dest)
+            copy_files(file_src, file_dest)
 
 def main():
-    pass
+    create_file_folder_structure("static", "public")
 
 main()
