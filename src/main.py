@@ -91,7 +91,37 @@ def copy_files(src, dest):
             mkdir(file_dest)
             copy_files(file_src, file_dest)
 
+def extract_title(markdown):
+    title = re.findall(r"^#.*", markdown)
+    if len(title) == 0:
+        raise Exception("No h1 header in markdown")
+    return title[0].strip("#").strip()
+
+def generate_page(from_path, template_path, dest_path):
+    print(f"Generating page from {from_path} to {dest_path} using {template_path}")
+    with open(from_path) as file:
+        markdown = file.read()
+
+    with open(template_path) as file:
+        template = file.read()
+
+    node = markdown_to_html_node(markdown)
+    page_content = node.to_html()
+    page_title = extract_title(markdown)
+    template = template.replace("{{ Title }}", page_title)
+    template = template.replace("{{ Content }}", page_content)
+
+    with open(dest_path, "w") as file:
+        file.write(template)
+
+
+
+
+
+
 def main():
     create_file_folder_structure("static", "public")
+    
+    generate_page("content/index.md", "template.html", "public/index.html")
 
 main()
