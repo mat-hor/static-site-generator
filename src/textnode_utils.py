@@ -13,7 +13,7 @@ def text_node_to_html_node(text_node):
         case TextType.CODE:
             return LeafNode(tag = "code", value=text_node.text)
         case TextType.LINK:
-            return LeafNode(tag = "a", value=text_node.text, props="href")
+            return LeafNode(tag = "a", value=text_node.text, props={"href":text_node.url})
         case TextType.IMAGE:
             return LeafNode(tag = "img", value="", props={"src":text_node.url, "alt":text_node.text})
         case _:
@@ -81,7 +81,8 @@ def split_nodes_link(old_nodes):
         for link in links:
             delimiter = f"[{link[0]}]({link[1]})"
             splited_text = text.split(delimiter, 1)
-            new_nodes.append(TextNode(splited_text[0], TextType.TEXT))
+            if splited_text[0].strip() != "":
+                new_nodes.append(TextNode(splited_text[0], TextType.TEXT))
             new_nodes.append(TextNode(link[0], TextType.LINK, link[1]))
             text = text.replace(splited_text[0], "")
             text = text.replace(delimiter, "")

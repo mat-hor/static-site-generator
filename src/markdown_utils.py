@@ -35,15 +35,16 @@ def block_to_block_type(block):
     hash_char = "#"
     order_number = 1
     result = BlockType.PARAGRAPG
+    print(block)
     for _ in range(0, 6):
         if re.findall(r"^" + hash_char + " ", line):
             result = BlockType.HEADING
         hash_char += "#"
     if re.findall(r"```[\s\S]*?```", line):
             result = BlockType.CODE
-    if re.findall(r">", line):
+    if re.findall(r"^> ", line):
             result = BlockType.QUOTE
-    if re.findall(r"- ", line):
+    if re.findall(r"^- ", line):
             result = BlockType.UNORDERED_LIST
     if re.findall(str(order_number) + ". ", line):
             result = BlockType.ORDERED_LIST
