@@ -33,9 +33,7 @@ def markdown_to_blocks(markdown):
 def block_to_block_type(block):
     line = block
     hash_char = "#"
-    order_number = 1
     result = BlockType.PARAGRAPG
-    print(block)
     for _ in range(0, 6):
         if re.findall(r"^" + hash_char + " ", line):
             result = BlockType.HEADING
@@ -46,9 +44,8 @@ def block_to_block_type(block):
             result = BlockType.QUOTE
     if re.findall(r"^- ", line):
             result = BlockType.UNORDERED_LIST
-    if re.findall(str(order_number) + ". ", line):
+    if re.findall("1. ", line):
             result = BlockType.ORDERED_LIST
-            order_number += 1
         
     return result
         

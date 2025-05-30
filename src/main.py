@@ -9,7 +9,7 @@ from shutil import rmtree, copy
 def text_to_leafnode(text, delimeter):
     text = text.replace(f"{delimeter}", "").lstrip()
     text_nodes = textnode_utils.text_to_textnodes(text)
-    print("AAA", text_nodes)
+    
     return list(map(lambda x: textnode_utils.text_node_to_html_node(x) ,text_nodes))
 
 def text_to_children(text):
@@ -24,7 +24,6 @@ def markdown_to_html_node(markdown):
     elements = []
     for text_block in text_blocks:
         block_type = markdown_utils.block_to_block_type(text_block)
-        print("BLOCK TYPE", block_type)
         match block_type:
             case markdown_utils.BlockType.CODE:    
                 code_node = TextNode(text=text_block.replace("```", "").lstrip(), text_type=textnode_utils.TextType.CODE)
@@ -38,7 +37,7 @@ def markdown_to_html_node(markdown):
             case markdown_utils.BlockType.QUOTE:
                 child = text_to_leafnode(text_block, ">")
                 child[0].tag = "blockquote"
-                block_parent = child
+                block_parent = child[0]
 
             case markdown_utils.BlockType.UNORDERED_LIST:
                 list_items = text_block.split("\n")
@@ -52,9 +51,11 @@ def markdown_to_html_node(markdown):
             case markdown_utils.BlockType.ORDERED_LIST:
                 list_items = text_block.split("\n")
                 unordered_list_children = []
+                order_number = 1
                 for list_item in list_items:
-                    child = text_to_leafnode(list_item, "-")
+                    child = text_to_leafnode(list_item, f"{order_number}.")
                     unordered_list_children.append(parentnode.ParentNode("li",child))
+                    order_number += 1
                 block_parent = parentnode.ParentNode("ol",unordered_list_children)
 
             case markdown_utils.BlockType.HEADING:
@@ -62,12 +63,10 @@ def markdown_to_html_node(markdown):
                 for num in range(0, 6):
                     if re.findall(r"^" + hash_char + " ", text_block):
                         child = text_to_leafnode(text_block, f"{hash_char}")
-                        print("O CO CHODZI", child)
                         child[0].tag = f"h{num + 1}"
                     hash_char += "#"
-                block_parent = child
+                block_parent = child[0]
                 
-        
         elements.append(block_parent)
 
     html_parent = parentnode.ParentNode("div",elements)
@@ -106,7 +105,6 @@ def generate_page(from_path, template_path, dest_path):
         template = file.read()
 
     node = markdown_to_html_node(markdown)
-
     page_content = node.to_html()
 
     page_title = extract_title(markdown)
@@ -115,6 +113,10 @@ def generate_page(from_path, template_path, dest_path):
 
     with open(dest_path, "w") as file:
         file.write(template)
+
+
+def generate_pages_recursive(dir_path_content, template_path, dest_dir_path):
+    pass
 
 
 def main():
