@@ -4,6 +4,7 @@ from textnode import TextNode
 import re
 from os import listdir, path, mkdir
 from shutil import rmtree, copy
+from sys import argv
 
 
 def text_to_leafnode(text, delimeter):
@@ -96,7 +97,7 @@ def extract_title(markdown):
         raise Exception("No h1 header in markdown")
     return title[0].strip("#").strip()
 
-def generate_page(from_path, template_path, dest_path):
+def generate_page(from_path, template_path, dest_path, basepath):
     print(f"Generating page from {from_path} to {dest_path} using {template_path}")
     with open(from_path) as file:
         markdown = file.read()
@@ -110,12 +111,13 @@ def generate_page(from_path, template_path, dest_path):
     page_title = extract_title(markdown)
     template = template.replace("{{ Title }}", page_title)
     template = template.replace("{{ Content }}", page_content)
-
+    template = template.replace('href="/', f'href="{basepath}')
+    template = template.replace('src="/', f'src="{basepath}')
     with open(dest_path, "w") as file:
         file.write(template)
 
 
-def generate_pages_recursive(dir_path_content, template_path, dest_dir_path):
+def generate_pages_recursive(dir_path_content, template_path, dest_dir_path, basepath):
     elements = listdir(dir_path_content)
 
     for element in elements:
@@ -123,14 +125,21 @@ def generate_pages_recursive(dir_path_content, template_path, dest_dir_path):
         file_dest = path.join(dest_dir_path, element)
         if path.isfile(file_src):
             if file_src.find("index.md") > 0:
-                generate_page(file_src, template_path, f"{dest_dir_path}/index.html")
+                generate_page(file_src, template_path, f"{dest_dir_path}/index.html", basepath)
         else:
             mkdir(file_dest)
-            generate_pages_recursive(file_src, template_path, file_dest)
+            generate_pages_recursive(file_src, template_path, file_dest, basepath)
 
 def main():
-    create_file_folder_structure("static", "public")
+
+    if len(argv) > 1:
+        basepath = argv[1]
+    else:
+        basepath = "/"
+
+    build_site_into = "public"
+    create_file_folder_structure("static", build_site_into)
     
-    generate_pages_recursive("content", "template.html", "public")
+    generate_pages_recursive("content", "template.html", build_site_into, basepath)
 
 main()
