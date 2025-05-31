@@ -24,7 +24,6 @@ def markdown_to_html_node(markdown):
     elements = []
     for text_block in text_blocks:
         block_type = markdown_utils.block_to_block_type(text_block)
-        print("BLOCK TYPE:", block_type)
         match block_type:
             case markdown_utils.BlockType.CODE:    
                 code_node = TextNode(text=text_block.replace("```", "").lstrip(), text_type=textnode_utils.TextType.CODE)

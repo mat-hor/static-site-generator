@@ -26,29 +26,19 @@ def split_nodes_delimiter(old_nodes, delimiter, text_type):
             if old_node.text_type != TextType.TEXT:
                 new_nodes.append(TextNode(old_node.text, old_node.text_type))
                 continue
-            start_position = old_node.text.find(delimiter)
-
-            if start_position == -1:
-                new_nodes.append(TextNode(old_node.text, old_node.text_type))
-                continue
-            end_position = old_node.text[start_position+1:].find(delimiter)
-            if end_position == -1:
-                raise Exception("Closing delimiter not found")
-            end_position += start_position
-            inline_bloc_text = old_node.text[start_position+len(delimiter):end_position+1]
-            splited_node_text = old_node.text.split(delimiter)
             
-            for split_text in splited_node_text:
-                
-                if inline_bloc_text in split_text:
-            
-                    text_node = TextNode(split_text, text_type)
-                    new_nodes.append(text_node)
+            text = old_node.text
+            splited_text  = text.split(delimiter)
+            if len(splited_text) % 2 == 0:
+                raise Exception("No closing delimiter")
+            for idx in range(0, len(splited_text)):
+                if idx % 2 == 0:
+                    new_nodes.append(TextNode(splited_text[idx], TextType.TEXT))
                 else:
-                    text_node = TextNode(split_text, old_node.text_type)
-                    new_nodes.append(text_node)
-            
+                    new_nodes.append(TextNode(splited_text[idx], text_type))
+                            
         return new_nodes
+
 
 def split_nodes_image(old_nodes):
     new_nodes = []
