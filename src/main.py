@@ -24,6 +24,7 @@ def markdown_to_html_node(markdown):
     elements = []
     for text_block in text_blocks:
         block_type = markdown_utils.block_to_block_type(text_block)
+        print("BLOCK TYPE:", block_type)
         match block_type:
             case markdown_utils.BlockType.CODE:    
                 code_node = TextNode(text=text_block.replace("```", "").lstrip(), text_type=textnode_utils.TextType.CODE)
@@ -100,12 +101,12 @@ def generate_page(from_path, template_path, dest_path):
     print(f"Generating page from {from_path} to {dest_path} using {template_path}")
     with open(from_path) as file:
         markdown = file.read()
-
     with open(template_path) as file:
         template = file.read()
 
     node = markdown_to_html_node(markdown)
     page_content = node.to_html()
+    
 
     page_title = extract_title(markdown)
     template = template.replace("{{ Title }}", page_title)
@@ -116,12 +117,21 @@ def generate_page(from_path, template_path, dest_path):
 
 
 def generate_pages_recursive(dir_path_content, template_path, dest_dir_path):
-    pass
+    elements = listdir(dir_path_content)
 
+    for element in elements:
+        file_src = path.join(dir_path_content, element)
+        file_dest = path.join(dest_dir_path, element)
+        if path.isfile(file_src):
+            if file_src.find("index.md") > 0:
+                generate_page(file_src, template_path, f"{dest_dir_path}/index.html")
+        else:
+            mkdir(file_dest)
+            generate_pages_recursive(file_src, template_path, file_dest)
 
 def main():
     create_file_folder_structure("static", "public")
     
-    generate_page("content/index.md", "template.html", "public/index.html")
+    generate_pages_recursive("content", "template.html", "public")
 
 main()
