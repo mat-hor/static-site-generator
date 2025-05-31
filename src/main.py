@@ -137,7 +137,7 @@ def main():
     else:
         basepath = "/"
 
-    build_site_into = "public"
+    build_site_into = "docs"
     create_file_folder_structure("static", build_site_into)
     
     generate_pages_recursive("content", "template.html", build_site_into, basepath)
